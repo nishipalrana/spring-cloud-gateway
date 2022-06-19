@@ -65,7 +65,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 			if (!request.getHeaders().containsKey("Authorization")) {
 				ServerHttpResponse response = exchange.getResponse();
 				response.setStatusCode(HttpStatus.UNAUTHORIZED);
-				return response.setComplete();
+				return sendErrorResponse(exchange, "Authorization Not Found");
 			}
 
 			final String token = request.getHeaders().getOrEmpty("Authorization").get(0);
@@ -76,7 +76,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 				logger.info("Exception "+e.getMessage());
 				ServerHttpResponse response = exchange.getResponse();
 				response.setStatusCode(HttpStatus.BAD_REQUEST);
-				return response.setComplete();
+				return sendErrorResponse(exchange, e.getMessage());
 			}
 
 			Claims claims = jwtUtil.getClaims(token);
